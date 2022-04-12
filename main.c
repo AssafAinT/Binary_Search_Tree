@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct treenode{
     int value;
@@ -47,29 +48,77 @@ void PrintTree(treenode* root){
     PrintTree_rec(root, 0);
 }
 
+bool InsertNumber(treenode** rootptr, int value){
+    treenode* root = *rootptr;
+    if (root ==NULL){
+        //TREE EMPTY
+        (*rootptr) = createnode(value);
+        return true;
+    }
+    if (value == root->value){
+        //do nothing
+        return false; //wouldnt allow duplicate in a tree
+    }
+    if (value< root->value){
+        return InsertNumber(&(root->left), value);
+    }
+    else {
+        return InsertNumber(&(root->right), value);
+    }
+
+}
+
+bool FindNumber(treenode* root, int value){
+    if (root ==NULL){
+        return false;
+    }
+    if(root->value==value){
+        return true;
+    }
+    if(value < root->value){
+        return FindNumber(root->left, value);
+    }
+    else {
+        return FindNumber(root->right, value);
+    }
+}
+
+int maxDepth(treenode* root)
+{
+    if (root == NULL)
+        return 0;
+    else
+    {
+        int lDepth = maxDepth(root->left);
+        int rDepth = maxDepth(root->right);
+
+        if (lDepth > rDepth)
+            return(lDepth + 1);
+        else return(rDepth + 1);
+    }
+}
+
 int main() {
-    treenode *n1 = createnode(10);
-    treenode *n2 = createnode(11);
-    treenode *n3 = createnode(12);
-    treenode *n4 = createnode(13);
-    treenode *n5 = createnode(14);
 
-    // creating the tree inheritance
+    treenode *root = NULL;
 
-    n1->left = n2;
-    n1->right = n3;
-    n3->left = n4;
-    n3->right = n5;
+    InsertNumber(&root, 15);
+    InsertNumber(&root, 11);
+    InsertNumber(&root, 19);
+    InsertNumber(&root, 6);
+    InsertNumber(&root, 16);
+    InsertNumber(&root, 24);
 
-    PrintTree(n1);
+    PrintTree(root);
 
-    free(n1);
-    free(n2);
-    free(n3);
-    free(n4);
-    free(n5);
+    printf("The tree has the depth of %d\n", maxDepth(root));
 
+    printf("%d (%d)\n", 16, FindNumber(root, 16));
+    printf("%d (%d)\n", 15, FindNumber(root, 15));
+    printf("%d (%d)\n", 19, FindNumber(root, 19));
+    printf("%d (%d)\n", 111, FindNumber(root, 111));
 
+    free(root);
 
 
     return 0;
